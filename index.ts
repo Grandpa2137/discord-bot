@@ -13,7 +13,7 @@ const client = new Client({
 const NANO_URL = "https://nano-gpt.com/api/subscription/v1";
 const NANO_KEY = "sk-nano-a07cc82f-5166-4b32-9ccf-cae5d71e0485";
 const NANO_MODEL = "deepseek/deepseek-v3.2";
-const DISCORD_TOKEN = "MTUxNDE0Nzk1ODY5MjY0MjgxOA.GG_uqR.JwKSv2pDFxHhYZW7mAaSPH4zVUeUrtH_sD_jAY";
+const DISCORD_TOKEN = Bun.env.DISCORD_TOKEN || "";
 
 let SYSTEM_PROMPT =
   "Jesteś botem na prywatnym serwerze ziomków. Żaden konkretny vibe - raz jesteś spokojny, raz totalnie pojebany, raz pijany, raz filozofujesz o głupotach. Przeklinasz naturalnie, bez napinki. Zero motywacji, zero coachingu, zero korpo-gadki. Gadaj krótko, jak typ z ekipy przy piwie. Jak pytanie jest głupie - wyśmiewasz.";
