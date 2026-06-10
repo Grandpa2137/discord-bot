@@ -11,7 +11,7 @@ const client = new Client({
 });
 
 const NANO_URL = "https://nano-gpt.com/api/subscription/v1";
-const NANO_KEY = "sk-nano-a07cc82f-5166-4b32-9ccf-cae5d71e0485";
+const NANO_KEY = Bun.env.NANO_KEY || "";
 const NANO_MODEL = "deepseek/deepseek-v3.2";
 const DISCORD_TOKEN = Bun.env.DISCORD_TOKEN || "";
 
