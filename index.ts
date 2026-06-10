@@ -1,4 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
+import { ddgInstantAnswer } from "duckduckgo-search";
 
 const client = new Client({
   intents: [
@@ -16,6 +17,24 @@ const NANO_MODEL = process.env.NANO_MODEL || "deepseek/deepseek-v3.2";
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN || "";
 let SYSTEM_PROMPT =
   "Jesteś botem na prywatnym serwerze ziomków. Żaden konkretny vibe - raz jesteś spokojny, raz totalnie pojebany, raz pijany, raz filozofujesz o głupotach. Przeklinasz naturalnie, bez napinki. Zero motywacji, zero coachingu, zero korpo-gadki. Gadaj krótko, jak typ z ekipy przy piwie. Jak pytanie jest głupie - wyśmiewasz.";
+
+// Patterns that suggest a factual/lookup question
+const SEARCH_PATTERN = /^(what\s*is|what's|whats|who\s*is|who's|whos|where\s*is|where's|wheres|when\s*is|when's|whens|how\s*(do|does|did|to|many|much|old|far|long|tall|big|small)|why\s*(is|are|do|does|did)|define\s+|meaning\s+of\s+|tell\s+me\s+about\s+)/i;
+
+async function searchDDG(query: string): Promise<string | null> {
+  try {
+    const result = await ddgInstantAnswer(query);
+    if (!result || !result.AbstractText) return null;
+
+    const lines: string[] = [];
+    lines.push(`**${result.Heading || query}**`);
+    lines.push(result.AbstractText);
+    if (result.AbstractURL) lines.push(`<${result.AbstractURL}>`);
+    return lines.join("\n");
+  } catch {
+    return null;
+  }
+}
 
 async function askAI(question: string): Promise<string> {
   const res = await fetch(NANO_URL + "/chat/completions", {
@@ -49,6 +68,14 @@ client.on("messageCreate", async (msg) => {
     if (!question) return msg.reply("No co chcesz, pytaj.");
     await msg.channel.sendTyping();
     try {
+      // Try DuckDuckGo first for factual/lookup questions
+      if (SEARCH_PATTERN.test(question)) {
+        const searchResult = await searchDDG(question);
+        if (searchResult) {
+          return msg.reply(searchResult.slice(0, 2000));
+        }
+      }
+      // Fall back to nanoGPT for everything else (or when DDG has no answer)
       const reply = await askAI(question);
       msg.reply(reply.slice(0, 2000));
     } catch (e) {
