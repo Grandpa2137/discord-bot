@@ -6,6 +6,9 @@
   },
   "dependencies": {
     "discord.js": "^14.16.3",
-    "@phukon/duckduckgo-search": "^1.2.0"
+    "@phukon/duckduckgo-search": "^1.2.0",
+    "@discordjs/voice": "^0.17.0",
+    "ytdl-core": "^4.11.5",
+    "play-dl": "^1.9.7"
   }
 }
