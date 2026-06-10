@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from "discord.js";
-import { ddgInstantAnswer } from "duckduckgo-search";
+import { DDGS } from "@phukon/duckduckgo-search";
 
 const client = new Client({
   intents: [
@@ -23,13 +23,15 @@ const SEARCH_PATTERN = /^(what\s*is|what's|whats|who\s*is|who's|whos|where\s*is|
 
 async function searchDDG(query: string): Promise<string | null> {
   try {
-    const result = await ddgInstantAnswer(query);
-    if (!result || !result.AbstractText) return null;
+    const ddgs = new DDGS();
+    const results = await ddgs.text({ keywords: query });
+    if (!results || results.length === 0) return null;
 
+    const top = results[0];
     const lines: string[] = [];
-    lines.push(`**${result.Heading || query}**`);
-    lines.push(result.AbstractText);
-    if (result.AbstractURL) lines.push(`<${result.AbstractURL}>`);
+    lines.push(`**${top.title || query}**`);
+    lines.push(top.body);
+    if (top.href) lines.push(`<${top.href}>`);
     return lines.join("\n");
   } catch {
     return null;

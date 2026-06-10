@@ -6,6 +6,6 @@
   },
   "dependencies": {
     "discord.js": "^14.16.3",
-    "duckduckgo-search": "^3.9.0"
+    "@phukon/duckduckgo-search": "^1.2.0"
   }
 }
